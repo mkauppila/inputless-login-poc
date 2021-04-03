@@ -23,9 +23,10 @@ await client.queryObject(`
 `);
 
 await client.queryObject(`
-  CREATE TABLE public.authentication (
+  create table public.authentication (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     login_code text UNIQUE NOT NULL,
+    fingerprint text unique NOT NULL,
     hash_and_salt text
   );
 `);

@@ -10,3 +10,8 @@ services:
       POSTGRES_DB: public
     ports:
       - "5432:5432"
+
+  redis-loginless:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
