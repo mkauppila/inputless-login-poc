@@ -58,6 +58,7 @@ router.get("/loginCode", async (ctx) => {
   }
 });
 
+// TODO Rename should be called authenticationToken!
 router.get("/authenticationCode", async (ctx) => {
   const loginCode = ctx.request.headers.get("x-login-code");
   const fingerprint = ctx.request.headers.get("x-fingerprint");
@@ -85,7 +86,7 @@ router.get("/authenticationCode", async (ctx) => {
 
     const authenticationToken = await redis.get(key);
     if (authenticationToken) {
-      redis.del(key);
+      await redis.del(key);
       ctx.response.status = 200;
       ctx.response.headers.append("cache", "no-cache");
       ctx.response.body = { authenticationToken };
@@ -153,7 +154,7 @@ router.put("/allowLoginCode", async (ctx) => {
   console.log("update db");
   try {
     await client.queryObject(`
-        update public.authentication 
+        update public.authentication
            set hash_and_salt = '${hash}'
          where login_code = '${loginCode}';
       `);
@@ -164,8 +165,8 @@ router.put("/allowLoginCode", async (ctx) => {
   }
 
   const key = loginCode;
-  redis.set(key, token);
-  redis.expire(key, 60);
+  await redis.set(key, token);
+  await redis.expire(key, 60);
 
   ctx.response.status = 200;
 });
